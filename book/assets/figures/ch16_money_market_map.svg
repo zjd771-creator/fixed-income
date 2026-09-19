@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="500" viewBox="0 0 1100 500" role="img" aria-labelledby="title desc">
+  <title id="title">图16-1 中国货币市场工具分类</title>
+  <desc id="desc">货币市场按短期债务证券、存款与银行负债、机构间资金融通分为三类。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#64748b"/></marker>
+    <style>
+      text { font-family: "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #1f2937; }
+      .title { font-size: 28px; font-weight: 700; }
+      .head { font-size: 20px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .note { font-size: 17px; fill: #475569; }
+      .box { stroke-width: 2; rx: 14; }
+      .arrow { stroke: #64748b; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1100" height="620" fill="#ffffff"/>
+  <rect x="390" y="75" width="320" height="72" class="box" fill="#e8f0f8" stroke="#1f4e79"/>
+  <text x="550" y="104" text-anchor="middle" class="head">货币市场</text>
+  <text x="550" y="132" text-anchor="middle" class="body">通常期限不超过 1 年</text>
+
+  <path d="M550 147 L190 205" class="arrow"/><path d="M550 147 L550 205" class="arrow"/><path d="M550 147 L910 205" class="arrow"/>
+
+  <rect x="45" y="210" width="290" height="62" class="box" fill="#e9f2fb" stroke="#2f75b5"/>
+  <text x="190" y="249" text-anchor="middle" class="head">短期债务证券</text>
+  <rect x="405" y="210" width="290" height="62" class="box" fill="#edf5e9" stroke="#548235"/>
+  <text x="550" y="249" text-anchor="middle" class="head">存款与银行负债</text>
+  <rect x="765" y="210" width="290" height="62" class="box" fill="#fbefe7" stroke="#c55a11"/>
+  <text x="910" y="249" text-anchor="middle" class="head">机构间资金融通</text>
+
+  <path d="M190 272 L190 310" class="arrow"/><path d="M550 272 L550 310" class="arrow"/><path d="M910 272 L910 310" class="arrow"/>
+
+  <rect x="45" y="315" width="290" height="145" class="box" fill="#f5f9fd" stroke="#2f75b5"/>
+  <text x="190" y="352" text-anchor="middle" class="body">政府：短期国库券</text>
+  <text x="190" y="391" text-anchor="middle" class="body">央行：央行票据</text>
+  <text x="190" y="430" text-anchor="middle" class="body">企业：CP / SCP</text>
+
+  <rect x="405" y="315" width="290" height="145" class="box" fill="#f6faf3" stroke="#548235"/>
+  <text x="550" y="352" text-anchor="middle" class="body">同业存单（NCD）</text>
+  <text x="550" y="391" text-anchor="middle" class="body">大额存单（CD）</text>
+  <text x="550" y="430" text-anchor="middle" class="body">短期银行存款</text>
+
+  <rect x="765" y="315" width="290" height="145" class="box" fill="#fdf7f2" stroke="#c55a11"/>
+  <text x="910" y="352" text-anchor="middle" class="body">同业拆借：无担保</text>
+  <text x="910" y="391" text-anchor="middle" class="body">回购：债券质押 / 买卖</text>
+  <text x="910" y="430" text-anchor="middle" class="body">央行公开市场操作</text>
+
+</svg>

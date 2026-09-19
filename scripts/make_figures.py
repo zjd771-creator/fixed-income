@@ -16,6 +16,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
+from matplotlib.patches import FancyBboxPatch  # noqa: E402
 
 from fi import backtest as bt  # noqa: E402
 from fi import convertible as cb  # noqa: E402
@@ -392,15 +393,79 @@ def _money_market():
     return mm.set_index("date")
 
 
+def ch16_money_market_map() -> None:
+    """货币市场工具分类图：按融资方式而非按机构名称分类。"""
+    fig, ax = plt.subplots(figsize=(11, 5))
+    ax.set_xlim(0, 12); ax.set_ylim(2.2, 7.6); ax.axis("off")
+
+    def box(x, y, w, h, text, color, fontsize=11):
+        patch = FancyBboxPatch(
+            (x, y), w, h, boxstyle="round,pad=0.03,rounding_size=0.12",
+            linewidth=1.4, edgecolor=color, facecolor=color, alpha=0.13,
+        )
+        ax.add_patch(patch)
+        ax.text(x + w / 2, y + h / 2, text, ha="center", va="center",
+                fontsize=fontsize, linespacing=1.45)
+
+    box(4.45, 6.55, 3.1, 0.8, "货币市场\n（通常期限不超过 1 年）", "#1f4e79", 13)
+    groups = [
+        (0.35, 4.75, "短期债务证券", "#2f75b5"),
+        (4.45, 4.75, "存款与银行负债", "#548235"),
+        (8.55, 4.75, "机构间资金融通", "#c55a11"),
+    ]
+    for x, y, title, color in groups:
+        box(x, y, 3.1, 0.75, title, color, 12)
+        ax.annotate("", xy=(x + 1.55, y + 0.75), xytext=(6, 6.55),
+                    arrowprops=dict(arrowstyle="->", color="#777777", lw=1.2))
+
+    box(0.35, 2.55, 3.1, 1.65,
+        "政府：短期国库券\n央行：央行票据\n企业：CP / SCP", "#2f75b5")
+    box(4.45, 2.55, 3.1, 1.65,
+        "同业存单（NCD）\n大额存单（CD）\n短期银行存款", "#548235")
+    box(8.55, 2.55, 3.1, 1.65,
+        "同业拆借：无担保\n回购：债券质押 / 买卖\n央行公开市场操作", "#c55a11")
+    for x in (1.9, 6.0, 10.1):
+        ax.annotate("", xy=(x, 4.2), xytext=(x, 4.75),
+                    arrowprops=dict(arrowstyle="->", color="#777777", lw=1.2))
+
+    _save(fig, "ch16_money_market_map.svg")
+
+
+def ch16_repo_rates() -> None:
+    """DR007/R007/GC007 的教学情景图，不冒充真实行情。"""
+    days = np.arange(1, 31)
+    dr = 1.80 + 0.035 * np.sin(days / 3.4)
+    nonbank_stress = 0.10 + 0.04 * np.sin(days / 2.8) + 0.55 * np.exp(-((days - 20) / 2.2) ** 2)
+    exchange_stress = 0.14 + 0.07 * np.sin(days / 2.1) + 1.05 * np.exp(-((days - 10) / 1.55) ** 2)
+    r = dr + nonbank_stress
+    gc = dr + exchange_stress
+
+    fig, ax = plt.subplots(figsize=(9, 4.8))
+    ax.plot(days, dr, lw=2.3, label="DR007：银行体系资金中枢")
+    ax.plot(days, r, lw=2.0, label="R007：含非银融资溢价")
+    ax.plot(days, gc, lw=2.0, label="GC007：交易所资金价格")
+    ax.axvspan(8.5, 11.5, color="C2", alpha=0.09)
+    ax.axvspan(17.5, 22.5, color="C1", alpha=0.09)
+    ax.annotate("交易所资金需求冲击", xy=(10, gc[9]), xytext=(4, 3.02),
+                arrowprops=dict(arrowstyle="->", color="C2"), color="C2")
+    ax.annotate("非银融资压力上升\nR007 − DR007 走阔", xy=(20, r[19]), xytext=(22.5, 2.65),
+                arrowprops=dict(arrowstyle="->", color="C1"), color="C1")
+    ax.set_xlabel("交易日（情景序号）"); ax.set_ylabel("7 天期回购利率 (%)")
+    ax.set_title("图16-2　DR007、R007 与 GC007 的变化及利差（情景示意，非真实行情）")
+    ax.legend(loc="upper left", ncol=1)
+    _save(fig, "ch16_repo_rates.svg")
+
+
 def ch16_carry() -> None:
     mm = _money_market()
     carry = mm["cgb_10y"] - mm["dr007"]
     r_dr = mm["r007"] - mm["dr007"]
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(9, 6))
     ax1.plot(carry.index, carry.values)
-    ax1.set_ylabel("carry (%)"); ax1.set_title("图16-1　carry = 10Y 国债收益率 − DR007")
+    ax1.set_ylabel("carry (%)"); ax1.set_title("carry = 10Y 国债收益率 − DR007")
     ax2.plot(r_dr.index, r_dr.values, color="C3")
-    ax2.set_ylabel("R007 − DR007 (%)"); ax2.set_title("图16-3　非银流动性分层利差")
+    ax2.set_ylabel("R007 − DR007 (%)"); ax2.set_title("非银流动性分层利差")
+    fig.suptitle("图16-3　套息空间与流动性分层（内置样本数据）")
     _save(fig, "ch16_carry.png")
 
 
@@ -416,7 +481,7 @@ def ch16_leverage_nav() -> None:
     fig, ax = plt.subplots(figsize=(8, 4.5))
     ax.plot(cum1.index, cum1.values, label="L=1（不加杠杆）")
     ax.plot(cum3.index, cum3.values, label="L=3")
-    ax.set_ylabel("累计净值"); ax.set_title("图16-2　杠杆前后累计回报对比"); ax.legend()
+    ax.set_ylabel("累计净值"); ax.set_title("图16-4　杠杆前后累计回报对比"); ax.legend()
     _save(fig, "ch16_leverage_nav.png")
 
 
@@ -441,6 +506,8 @@ def main() -> None:
     ch13_capfloor()
     ch17_riding()
     ch18_var()
+    ch16_money_market_map()
+    ch16_repo_rates()
     ch16_carry()
     ch16_leverage_nav()
     print("所有图已生成至", FIG)
